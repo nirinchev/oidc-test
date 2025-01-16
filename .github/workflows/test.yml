@@ -16,8 +16,31 @@ jobs:
         with:
           node-version: 20.16.0
 
+      - name: Install Deps Ubuntu
+        if: ${{ runner.os == 'Linux' }}
+        run: sudo apt-get update -y && sudo apt-get -y install libkrb5-dev libsecret-1-dev net-tools libstdc++6 gnome-keyring
+        shell: bash
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run node-gyp bug workaround script
+        run: |
+          curl -sSfLO https://raw.githubusercontent.com/mongodb-js/compass/42e6142ae08be6fec944b80ff6289e6bcd11badf/.evergreen/node-gyp-bug-workaround.sh && bash node-gyp-bug-workaround.sh
+        shell: bash
+
+      - name: Install npm
+        run: npm install -g npm@8.19.4
+        shell: bash
+
       - name: Install Dependencies
-        run: npm ci
+        shell: bash
+        run: |
+          npm ci --omit=optional
 
       - name: Run Tests
         run: node index.js
+        env:
+          DEBUG: "*"
+          NODE_OPTIONS: "--max_old_space_size=4096"
