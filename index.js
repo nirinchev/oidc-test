@@ -20,13 +20,14 @@ await MongoCluster.start({
       logDir: process.env.MONGODB_RUNNER_LOGDIR,
       args: [
         '--setParameter',
+        '--debug',
         'authenticationMechanisms=SCRAM-SHA-256,MONGODB-OIDC',
         // enableTestCommands allows using http:// issuers such as http://localhost
         '--setParameter',
         'enableTestCommands=true',
         '--setParameter',
         `oidcIdentityProviders=${JSON.stringify([serverOidcConfig])}`,
-      ],
+    ],
 
 });
 
